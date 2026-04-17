@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FutazAI - Kérdőív</title>
+
+  <link rel="stylesheet" href="file:///Users/gabor/Documents/GitHub/FutazAI/src/styles/index.css" />
+</head>
+
+<body>
+
+    <div class="quiz">
+    
+      <h1>FutazAI onboarding</h1>
+    
+      <!-- KÉRDÉS -->
+      <div id="question-box">
+    
+        <h2 id="question-text"></h2>
+    
+        <div id="input-box"></div>
+    
+      </div>
+    
+      <!-- TOVÁBB GOMB -->
+      <button id="next-btn" disabled>Következő</button>
+    
+    </div>
+    
+    <script>
+        const flow = {
+  start: "q1",
+
+  q1: {
+    text: "Mi a fő célod?",
+    type: "select",
+    options: {
+      "Fogyás / Fittebb élet": "q2a",
+      "Versenyre készülés": "q2b"
+    }
+  },
+
+  q2a: {
+    text: "Mennyit mozogsz mostanában? Mi esik jól?",
+    type: "text",
+    next: "q3"
+  },
+
+  q2b: {
+    text: "Melyik táv? Mikor van a verseny? Van célidő?",
+    type: "text",
+    next: "q3"
+  },
+
+  q3: {
+    text: "Kor, súly, magasság, sérülés?",
+    type: "text",
+    next: "q4"
+  },
+
+  q4: {
+    text: "Órával mérsz vagy telefonnal?",
+    type: "select",
+    options: {
+      "Óra": "q5",
+      "Telefon": "q5"
+    }
+  },
+
+  q5: {
+    text: "Heti hány nap fér bele?",
+    type: "number",
+    next: "q6"
+  },
+
+  q6: {
+    text: "Mehet heti 1 erősítés is?",
+    type: "select",
+    options: {
+      "Igen": "end",
+      "Nem": "end"
+    }
+  }
+};
+        let current = flow.start;
+        const answers = {};
+        
+        const questionText = document.getElementById("question-text");
+        const inputBox = document.getElementById("input-box");
+        const nextBtn = document.getElementById("next-btn");
+        
+        function render() {
+          const q = flow[current];
+          questionText.textContent = q.text;
+          inputBox.innerHTML = "";
+          nextBtn.disabled = true;
+        
+          let input;
+        
+          if (q.type === "select") {
+            input = document.createElement("select");
+            input.innerHTML = `<option value="">Válassz...</option>` +
+              Object.keys(q.options)
+                .map(opt => `<option value="${opt}">${opt}</option>`)
+                .join("");
+        
+          } else {
+            input = document.createElement("input");
+            input.type = q.type;
+          }
+        
+          input.addEventListener("input", () => {
+            answers[current] = input.value;
+            nextBtn.disabled = !input.value;
+          });
+        
+          inputBox.appendChild(input);
+        
+          nextBtn.onclick = () => {
+            const answer = answers[current];
+            const next = q.type === "select"
+              ? q.options[answer]
+              : q.next;
+        
+            if (next === "end") {
+              alert("Készen is vagyunk!!");
+              console.log(answers);
+              return;
+            }
+        
+            current = next;
+            render();
+          };
+        }
+        
+        render();
+        </script>
+    
+    </body>
+    </html>

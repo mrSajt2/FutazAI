@@ -6,7 +6,7 @@
   <title>FutazAI</title>
 
   <!-- CSS bekötése -->
-  <link rel="stylesheet" href="src/styles/style.css" />
+  <link rel="stylesheet" href="file:///Users/gabor/Documents/GitHub/FutazAI/src/styles/index.css" />
 </head>
 
 <body>
@@ -22,7 +22,7 @@
   </nav>
 
   <!-- HERO -->
-  <section class="hero">
+  <section class="hero fade-in">
     <h1>Fuss okosabban.</h1>
     <p>AI által generált, személyre szabott futóedzéstervek — a céljaidhoz igazítva.</p>
 
@@ -33,27 +33,44 @@
   </section>
 
   <!-- SECTION 1 -->
-  <section class="section gray">
+  <section class="section gray fade-in">
     <h2>Teljesen rád szabva</h2>
     <p>VO₂ max, célverseny és edzettségi szint alapján generált edzéstervek.</p>
   </section>
 
   <!-- SECTION 2 -->
-  <section class="section">
+  <section class="section fade-in">
     <h2>Adaptív edzés</h2>
     <p>Ha kihagysz egy napot, az AI automatikusan újratervez.</p>
   </section>
 
   <!-- CTA -->
-  <section class="section cta">
+  <section class="section cta fade-in">
     <h2>Kezdd el még ma</h2>
-    <button>Ingyenes kipróbálás</button>
+    <a href="file:///Users/gabor/Documents/GitHub/FutazAI/src/pages/quiz.html">
+      <button>Ingyenes kipróbálás</button>
+    </a>
   </section>
 
   <!-- FOOTER -->
   <footer>
     © 2026 FutazAI
   </footer>
+
+  <!-- ANIMÁCIÓ SCRIPT -->
+  <script>
+    const elements = document.querySelectorAll(".fade-in");
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+        }
+      });
+    });
+
+    elements.forEach(el => observer.observe(el));
+  </script>
 
 </body>
 </html>
