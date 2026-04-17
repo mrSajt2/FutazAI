@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FutazAI</title>
+
+  <!-- CSS bekötése -->
+  <link rel="stylesheet" href="/src/styles/index.css" />
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div><strong>FutazAI</strong></div>
+    <div>
+      <a href="#">Features</a>
+      <a href="#">Pricing</a>
+      <a href="#">Login</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero fade-in">
+    <h1>Fuss okosabban.</h1>
+    <p>AI által generált, személyre szabott futóedzéstervek — a céljaidhoz igazítva.</p>
+
+    <div class="buttons">
+      <button class="primary">Próbáld ki</button>
+      <button class="secondary">Tudj meg többet</button>
+    </div>
+  </section>
+
+  <!-- SECTION 1 -->
+  <section class="section gray fade-in">
+    <h2>Teljesen rád szabva</h2>
+    <p>VO₂ max, célverseny és edzettségi szint alapján generált edzéstervek.</p>
+  </section>
+
+  <!-- SECTION 2 -->
+  <section class="section fade-in">
+    <h2>Adaptív edzés</h2>
+    <p>Ha kihagysz egy napot, az AI automatikusan újratervez.</p>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta fade-in">
+    <h2>Kezdd el még ma</h2>
+    <a href="/src/pages/quiz.html">
+      <button>Ingyenes kipróbálás</button>
+    </a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2026 FutazAI
+  </footer>
+
+  <!-- ANIMÁCIÓ SCRIPT -->
+  <script>
+    const elements = document.querySelectorAll(".fade-in");
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+        }
+      });
+    });
+
+    elements.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
