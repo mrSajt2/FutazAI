@@ -5,6 +5,10 @@ body {
   background: #fff;
 }
 
+a {
+  text-decoration-line: none;
+}
+
 /* NAVBAR */
 nav {
   display: flex;
