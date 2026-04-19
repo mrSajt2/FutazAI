@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FutazAI - Kérdőív</title>
 
-  <link rel="stylesheet" href="https://mrsajt2.github.io/FutazAI/index.css" />
+  <link rel="stylesheet" href="../../index.css" />
 </head>
 
 <body>
@@ -149,82 +149,57 @@ const db = getFirestore(app);
         const inputBox = document.getElementById("input-box");
         const nextBtn = document.getElementById("next-btn");
         
-        function render() {
-          const q = flow[current];
-          questionText.textContent = q.text;
-          inputBox.innerHTML = "";
-          nextBtn.disabled = true;
-          nextBtn.style.display = "inline-block";
-          let input = null;
-
-if (q.type === "select") {
-  input = document.createElement("select");
-
-  input.innerHTML =
-    `<option value="">Válassz...</option>` +
-    Object.keys(q.options)
-      .map(opt => `<option value="${opt}">${opt}</option>`)
-      .join("");
-
-  input.addEventListener("change", () => {
-    answers[current] = input.value;
-    nextBtn.disabled = !input.value;
-  });
-}
-
-else if (q.type === "text" || q.type === "number") {
-  input = document.createElement("input");
-  input.type = q.type;
-
-  input.addEventListener("input", () => {
-    answers[current] = input.value;
-    nextBtn.disabled = !input.value;
-  });
-}
-        
-          if (q.type === "buttons") {
-  const wrapper = document.createElement("div");
-  wrapper.className = "button-group";
-
-  Object.keys(q.options).forEach(opt => {
-    const btn = document.createElement("button");
-    btn.textContent = opt;
-    btn.className = "choice-btn";
-
-    btn.onclick = async () => {
-      answers[current] = opt;
-
-      // kis vizuális feedback
-      btn.classList.add("active");
-
-      // rövid delay (Apple feel)
-      setTimeout(async () => {
-        const next = q.options[opt];
-
-        if (next === "end") {
+        async function finishQuiz() {
           await addDoc(collection(db, "users"), {
             answers
           });
 
           alert("Készen is vagyunk!!");
           console.log(answers);
-          return;
         }
 
-        current = next;
-        render();
-      }, 200); // 0.2s delay
-    };
+        function render() {
+          const q = flow[current];
+          questionText.textContent = q.text;
+          inputBox.innerHTML = "";
+          nextBtn.disabled = true;
+          nextBtn.style.display = "inline-block";
 
-    wrapper.appendChild(btn);
-  });
+          if (q.type === "buttons") {
+            const wrapper = document.createElement("div");
+            wrapper.className = "button-group";
 
-  inputBox.appendChild(wrapper);
+            Object.keys(q.options).forEach(opt => {
+              const btn = document.createElement("button");
+              btn.textContent = opt;
+              btn.className = "choice-btn";
 
-  // ELREJTJÜK A NEXT GOMBOT
-  nextBtn.style.display = "none";
+              btn.onclick = () => {
+                answers[current] = opt;
+                btn.classList.add("active");
 
-          } else if (q.type === "inline-input") {
+                setTimeout(async () => {
+                  const next = q.options[opt];
+
+                  if (next === "end") {
+                    await finishQuiz();
+                    return;
+                  }
+
+                  current = next;
+                  render();
+                }, 200);
+              };
+
+              wrapper.appendChild(btn);
+            });
+
+            inputBox.appendChild(wrapper);
+            nextBtn.style.display = "none";
+            return;
+          }
+
+          if (q.type === "inline-input") {
             const wrapper = document.createElement("div");
             wrapper.className = "button-group";
 
@@ -240,109 +215,102 @@ else if (q.type === "text" || q.type === "number") {
             wrapper.appendChild(noBtn);
             inputBox.appendChild(wrapper);
 
-            // INPUT (rejtve)
-            const input = document.createElement("input");
-            input.type = "text";
-            input.placeholder = "Írd le a sérülést...";
-            input.style.display = "none";
-            input.style.marginTop = "15px";
+            const detailInput = document.createElement("input");
+            detailInput.type = "text";
+            detailInput.placeholder = "Írd le a sérülést...";
+            detailInput.style.display = "none";
+            detailInput.style.marginTop = "15px";
+            inputBox.appendChild(detailInput);
 
-            inputBox.appendChild(input);
-
-            // SEGÉD: aktív gomb kezelés
-            function setActive(btn) {
-                document.querySelectorAll(".choice-btn").forEach(b => b.classList.remove("active"));
-                btn.classList.add("active");
+            function setActive(activeBtn) {
+              [yesBtn, noBtn].forEach(btn => btn.classList.remove("active"));
+              activeBtn.classList.add("active");
             }
 
-            // 👉 IGEN
             yesBtn.onclick = () => {
-                setActive(yesBtn);
+              setActive(yesBtn);
+              answers[current] = "Igen";
 
-                answers[current] = "Igen";
+              detailInput.style.display = "block";
+              detailInput.value = answers.injuryDetail || "";
+              detailInput.focus();
 
-                // input megjelenik
-                input.style.display = "block";
-                input.focus();
-
-                nextBtn.style.display = "inline-block";
-                nextBtn.disabled = !input.value;
-
-                // ha már volt válasz, visszatöltjük
-                input.value = answers["injuryDetail"] || "";
-
-                input.oninput = () => {
-                answers["injuryDetail"] = input.value;
-                nextBtn.disabled = !input.value;
-                };
+              nextBtn.disabled = !detailInput.value.trim();
             };
 
-            // 👉 NEM
             noBtn.onclick = () => {
-                setActive(noBtn);
+              setActive(noBtn);
+              answers[current] = "Nem";
+              answers.injuryDetail = null;
 
-                answers[current] = "Nem";
-
-                // input eltűnik + reset
-                input.style.display = "none";
-                input.value = "";
-                answers["injuryDetail"] = null;
-
-                nextBtn.style.display = "inline-block";
-                nextBtn.disabled = false;
+              detailInput.style.display = "none";
+              detailInput.value = "";
+              nextBtn.disabled = false;
             };
-            } else {
+
+            detailInput.addEventListener("input", () => {
+              answers.injuryDetail = detailInput.value.trim();
+              nextBtn.disabled = !answers.injuryDetail;
+            });
+
+            return;
+          }
+
+          let input;
+
+          if (q.type === "select") {
+            input = document.createElement("select");
+            input.innerHTML =
+              `<option value="">Válassz...</option>` +
+              Object.keys(q.options)
+                .map(opt => `<option value="${opt}">${opt}</option>`)
+                .join("");
+
+            input.addEventListener("change", () => {
+              answers[current] = input.value;
+              nextBtn.disabled = !input.value;
+            });
+          } else {
             input = document.createElement("input");
             input.type = q.type;
+
+            input.addEventListener("input", () => {
+              answers[current] = input.value.trim();
+              nextBtn.disabled = !answers[current];
+            });
           }
-        
-          input.addEventListener("input", () => {
-            answers[current] = input.value;
-            nextBtn.disabled = !input.value;
-          });
-        
+
           inputBox.appendChild(input);
-        
-          nextBtn.onclick = () => {
-            const q = flow[current];
-            const answer = answers[current];
-
-            // nincs válasz → nincs tovább
-            if (!answer) return;
-
-            // inline-input extra check
-            if (q.type === "inline-input") {
-                if (answer === "Igen" && !answers["injuryDetail"]) return;
-            }
-
-            let next;
-
-            // ha van options → abból jön a next
-            if (q.options) {
-                next = q.options[answer];
-            } else {
-                next = q.next;
-            }
-
-            // safety check
-            if (!next) {
-                console.log("Nincs next:", current, answer);
-                return;
-            }
-
-            // vége
-            if (next === "end") {
-                alert("Készen vagy!");
-                console.log(answers);
-                return;
-            }
-
-            // tovább
-            current = next;
-            render();
-            };
         }
         
+        nextBtn.onclick = async () => {
+          const q = flow[current];
+          const answer = answers[current];
+
+          if (!answer) {
+            return;
+          }
+
+          if (q.type === "inline-input" && answer === "Igen" && !answers.injuryDetail) {
+            return;
+          }
+
+          const next = q.options ? q.options[answer] : q.next;
+
+          if (!next) {
+            console.log("Nincs next:", current, answer);
+            return;
+          }
+
+          if (next === "end") {
+            await finishQuiz();
+            return;
+          }
+
+          current = next;
+          render();
+        };
+
         render();
         </script>
     
