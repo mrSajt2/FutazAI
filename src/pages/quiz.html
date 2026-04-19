@@ -278,30 +278,47 @@ const db = getFirestore(app);
         
           inputBox.appendChild(input);
         
-          nextBtn.onclick = async () => {
+          nextBtn.onclick = () => {
+            const q = flow[current];
             const answer = answers[current];
-            const next = q.type === "select"
-              ? q.options[answer]
-              : q.next;
 
-// ha inline-input és IGEN → kell injuryDetail is
-            if (flow[current].type === "inline-input") {
-            if (answer === "Igen" && !answers["injuryDetail"]) return;
+            if (!answer) return;
+
+            let next;
+
+            // 🔥 INLINE-INPUT KÜLÖN KEZELÉS
+            if (q.type === "inline-input") {
+                if (answer === "Igen") {
+                if (!answers["injuryDetail"]) return; // kötelező input
+                }
+                next = q.next;
             }
 
-            if (!answer) return;  
+            else if (q.type === "select") {
+                next = q.options?.[answer];
+            }
+
+            else if (q.type === "buttons") {
+                next = q.options?.[answer];
+            }
+
+            else {
+                next = q.next;
+            }
+
+            if (!next) return;
 
             if (next === "end") {
-                await addDoc(collection(db, "users"), {
-                    answers: answers
-                });
-                alert("További információkkal hamarosan jelentkezünk!");
-              return;
+                alert("Készen vagy!");
+                console.log(answers);
+                return;
             }
-        
+
+            stepIndex++;
             current = next;
+            updateProgress();
             render();
-          };
+            };
         }
         
         render();
