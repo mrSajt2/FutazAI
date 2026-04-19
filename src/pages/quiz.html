@@ -155,7 +155,32 @@ const db = getFirestore(app);
           inputBox.innerHTML = "";
           nextBtn.disabled = true;
           nextBtn.style.display = "inline-block";
-          let input;
+          let input = null;
+
+if (q.type === "select") {
+  input = document.createElement("select");
+
+  input.innerHTML =
+    `<option value="">Válassz...</option>` +
+    Object.keys(q.options)
+      .map(opt => `<option value="${opt}">${opt}</option>`)
+      .join("");
+
+  input.addEventListener("change", () => {
+    answers[current] = input.value;
+    nextBtn.disabled = !input.value;
+  });
+}
+
+else if (q.type === "text" || q.type === "number") {
+  input = document.createElement("input");
+  input.type = q.type;
+
+  input.addEventListener("input", () => {
+    answers[current] = input.value;
+    nextBtn.disabled = !input.value;
+  });
+}
         
           if (q.type === "buttons") {
   const wrapper = document.createElement("div");
