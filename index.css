@@ -38,16 +38,13 @@ nav a {
 }
 
 /* BUTTONS */
-.buttons button,
-.buttons .button-link {
+.buttons button {
   padding: 12px 24px;
   border-radius: 999px;
   border: none;
   margin: 5px;
   font-size: 16px;
   cursor: pointer;
-  display: inline-block;
-  text-decoration: none;
 }
 
 .primary {
