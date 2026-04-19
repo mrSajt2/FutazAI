@@ -53,25 +53,64 @@ const db = getFirestore(app);
     text: "Mi a fő célod?",
     type: "buttons",
     options: {
-      "Fogyás / Fittebb élet": "q2a",
+      "Fogyás / Fittebb életmód": "q2a",
       "Versenyre készülés": "q2b"
     }
   },
 
   q2a: {
-    text: "Mennyit mozogsz mostanában? Mi esik jól?",
+    text: "Mennyit futsz mostanában(km)? Mi esik jól?",
     type: "text",
     next: "q3"
   },
 
   q2b: {
-    text: "Melyik táv? Mikor van a verseny? Van célidő?",
-    type: "text",
-    next: "q3"
+    text: "Melyik táv?",
+    type: "buttons",
+    options: {
+        "5k": "q3a",
+        "10k": "q3a",
+        "21k": "q3a",
+        "42": "q3a",
+        "Több": "q2c"
+    }
   },
 
-  q3: {
-    text: "Kor, súly, magasság, sérülés?",
+  q2c: {
+    text: "Mekkora távról van szó pontosan?(km)",
+    type: "number",
+    next: "q3a"
+  },
+
+  q3a: {
+    text: "Életkor?",
+    type: "number",
+    next: "q3b"
+  },
+
+  q3b: {
+    text: "Testsúly?",
+    type: "number",
+    next: "q3c"
+  },
+
+  q3c: {
+    text: "Magasság?",
+    type: "number",
+    next: "q3d"
+  },
+
+  q3d: {
+    text: "Van e valamilyen sérülésed?",
+    type: "buttons",
+    options: {
+      "Igen": "q3e",
+      "Nem": "q4"
+    }
+  },
+
+  q3e: {
+    text: "Milyen sérülésed van?",
     type: "text",
     next: "q4"
   },
@@ -87,8 +126,16 @@ const db = getFirestore(app);
 
   q5: {
     text: "Heti hány nap fér bele?",
-    type: "number",
-    next: "q6"
+    type: "buttons",
+    options: {
+        "1": "q6",
+        "2": "q6",
+        "3": "q6",
+        "4": "q6",
+        "5": "q6",
+        "6": "q6",
+        "7": "q6"
+    }
   },
 
   q6: {
