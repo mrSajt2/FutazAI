@@ -278,7 +278,10 @@ flex: 0 0 auto;
 .consent-option span {
 flex: 1 1 auto;
 min-width: 0;
-overflow-wrap: anywhere;
+display: block;
+overflow-wrap: break-word;
+word-break: normal;
+white-space: normal;
 }
 
 .policy-page {
