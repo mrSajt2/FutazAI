@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FutazAI - Hamarosan</title>
+  <link rel="stylesheet" href="../../index.css" />
+</head>
+<body>
+  <main class="status-page">
+    <section class="status-card fade-in show">
+      <p class="status-eyebrow">FutazAI</p>
+      <h1>A projekt még nincs teljesen kész.</h1>
+      <p class="status-copy">
+        Köszönjük, hogy kitöltötted a kérdőívet. Dolgozunk a végleges verzión, és ha elkészül,
+        a megadott elérhetőségeiden felvesszük veled a kapcsolatot.
+      </p>
+      <a id="qa-button" class="status-button" href="./qanda.html" aria-disabled="true">Q&amp;A oldal</a>
+    </section>
+  </main>
+
+  <script>
+    const qaButton = document.getElementById("qa-button");
+
+    setTimeout(() => {
+      qaButton.classList.add("visible");
+      qaButton.setAttribute("aria-disabled", "false");
+    }, 3000);
+  </script>
+</body>
+</html>

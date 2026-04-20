@@ -375,9 +375,7 @@ const quizStorageKey = "futazai-quiz-state";
 
           sessionStorage.removeItem(quizStorageKey);
           await signOut(auth).catch(() => {});
-
-          alert("Készen is vagyunk!!");
-          console.log(answers);
+          window.location.href = "./waiting.html";
         }
 
         function render() {
